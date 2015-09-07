@@ -30,7 +30,7 @@ SOURCES += main.cpp \
     see3cam_cu130.cpp
 
 #installation path
-target.path = /usr/
+target.path = usr/
 
 
 # Please do not modify the following two lines. Required for deployment.
