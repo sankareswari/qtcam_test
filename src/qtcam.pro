@@ -59,7 +59,7 @@ HEADERS += \
 INCLUDEPATH +=  $$PWD/v4l2headers/include \
                 /usr/include
 
-LIBS += -lv4l2 -lv4lconvert0 \
+LIBS += -L/usr/lib/ -lv4l2 -lv4lconvert \
         -L/usr/lib/ -lavutil -lavcodec -lavformat -lswscale -ludev  \
         -L/usr/lib/ -lturbojpeg
 
