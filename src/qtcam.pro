@@ -3,7 +3,7 @@ folder_01.source = qml/qtcam
 folder_01.target = qml
 DEPLOYMENTFOLDERS = folder_01
 
-QT += widgets qml quick
+QT += widgets
 TARGET = Qtcam
 
 CONFIG += release
