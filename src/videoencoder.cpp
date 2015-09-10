@@ -228,7 +228,7 @@ int VideoEncoder::encodeImage(const QImage &img)
     }
     if (got_packet) {
         if (pCodecCtx->coded_frame->pts != AV_NOPTS_VALUE)
-            av_packet_rescale_ts(&pkt, pCodecCtx->time_base, pVideoStream->time_base);
+		pkt.pts= av_rescale_q(pCodecCtx->coded_frame->pts, pCodecCtx->time_base, pVideoStream->time_base);
         pkt.stream_index = pVideoStream->index;
         if((tempExtensionCheck) == "mkv") {
             i++;
