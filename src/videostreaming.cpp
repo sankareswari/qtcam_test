@@ -413,8 +413,6 @@ int Videostreaming::jpegDecode(unsigned char **pic, unsigned char *buf, unsigned
     unsigned char **jpegbuf = NULL, *srcbuf = NULL;
     unsigned long *jpegsize = NULL, srcSize;
 
-  //  flags |= TJFLAG_FASTDCT;
-
     srcSize = bytesUsed;
 
     if((srcbuf=(unsigned char *)malloc(srcSize))==NULL)

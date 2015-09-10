@@ -24,6 +24,12 @@
 #include <QFile>
 #include <QImage>
 
+/* checking version compatibility */
+#define LIBAVCODEC_VER_AT_LEAST(major,minor)  (LIBAVCODEC_VERSION_MAJOR > major || \
+                                              (LIBAVCODEC_VERSION_MAJOR == major && \
+                                               LIBAVCODEC_VERSION_MINOR >= minor))
+
+
 extern "C" {
 #include "libavcodec/avcodec.h"
 #include "libavformat/avformat.h"

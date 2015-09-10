@@ -118,15 +118,20 @@ bool VideoEncoder::createFile(QString fileName,CodecID encodeType, unsigned widt
             pCodecCtx->qmin = 15; // qmin = 10*
             pCodecCtx->qmax = 30; //qmax = 51 **
         }
-
+#if !LIBAVCODEC_VER_AT_LEAST(53,6)
         /* set the output parameters (must be done even if no
                 parameters). */
         if (av_set_parameters(pFormatCtx, NULL) < 0) {
             printf("Invalid output format parameters\n");
             return false;
         }
+#endif
 
+#if LIBAVCODEC_VER_AT_LEAST(53,6)
+        if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0)
+#else
         if (avcodec_open(pCodecCtx, pCodec) < 0)
+#endif
         {
             printf("could not open codec\n");
             return false;
@@ -201,44 +206,45 @@ bool VideoEncoder::closeFile()
 
    The frame must be of the same size as specifie
 **/
-//int VideoEncoder::encodeImage(const QImage &img)
-//{
-//    if(!isOk())
-//        return -1;
-//    convertImage_sws(img);     // SWS conversion
+#if LIBAVCODEC_VER_AT_LEAST(54,01)
+int VideoEncoder::encodeImage(const QImage &img)
+{
+    if(!isOk())
+        return -1;
+    convertImage_sws(img);     // SWS conversion
 
-//    int got_packet = 0;
-//    int out_size = 0;
-//    pkt.data = NULL;
-//    pkt.size = 0;
-//    av_init_packet(&pkt);
-//    pkt.pts = pkt.dts = ppicture->pts;
+    int got_packet = 0;
+    int out_size = 0;
+    pkt.data = NULL;
+    pkt.size = 0;
+    av_init_packet(&pkt);
+    pkt.pts = pkt.dts = ppicture->pts;
 
-//    /* encode the image */
-//    int ret = avcodec_encode_video2(pCodecCtx, &pkt, ppicture, &got_packet);
-//    if (ret < 0) {
-//        fprintf(stderr, "Error encoding a video frame\n");
-//        exit(1);
-//    }
-//    if (got_packet) {
-//        if (pCodecCtx->coded_frame->pts != AV_NOPTS_VALUE)
-//            av_packet_rescale_ts(&pkt, pCodecCtx->time_base, pVideoStream->time_base);
-//        pkt.stream_index = pVideoStream->index;
-//        if((tempExtensionCheck) == "mkv") {
-//            i++;
-//            pkt.pts = (i*(1000/pCodecCtx->gop_size));
-//            pkt.dts = pkt.pts;
-//        }
-//        if(pCodecCtx->coded_frame->key_frame)
-//            pkt.flags |= AV_PKT_FLAG_KEY;
+    /* encode the image */
+    int ret = avcodec_encode_video2(pCodecCtx, &pkt, ppicture, &got_packet);
+    if (ret < 0) {
+        fprintf(stderr, "Error encoding a video frame\n");
+        exit(1);
+    }
+    if (got_packet) {
+        if (pCodecCtx->coded_frame->pts != AV_NOPTS_VALUE)
+            av_packet_rescale_ts(&pkt, pCodecCtx->time_base, pVideoStream->time_base);
+        pkt.stream_index = pVideoStream->index;
+        if((tempExtensionCheck) == "mkv") {
+            i++;
+            pkt.pts = (i*(1000/pCodecCtx->gop_size));
+            pkt.dts = pkt.pts;
+        }
+        if(pCodecCtx->coded_frame->key_frame)
+            pkt.flags |= AV_PKT_FLAG_KEY;
 
-//        /* Write the compressed frame to the media file. */
-//        out_size = av_write_frame(pFormatCtx, &pkt);
-//        av_free_packet(&pkt);
-//    }
-//    return out_size;
-//}
-
+        /* Write the compressed frame to the media file. */
+        out_size = av_write_frame(pFormatCtx, &pkt);
+        av_free_packet(&pkt);
+    }
+    return out_size;
+}
+#else
 int VideoEncoder::encodeImage(const QImage &img)
 {
     int out_size, ret;
@@ -276,7 +282,7 @@ int VideoEncoder::encodeImage(const QImage &img)
        ret = 0;
     }
 }
-
+#endif
 
 void VideoEncoder::initVars()
 {
@@ -344,7 +350,11 @@ void VideoEncoder::freeOutputBuf()
 
 bool VideoEncoder::initFrame()
 {
+#if LIBAVCODEC_VER_AT_LEAST(53,34)
     ppicture = avcodec_alloc_frame();
+#else
+    ppicture = av_frame_alloc();
+#endif
     if(ppicture==0)
         return false;
 

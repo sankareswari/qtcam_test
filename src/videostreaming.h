@@ -40,6 +40,15 @@
 #include "v4l2-api.h"
 #include "videoencoder.h"
 
+#if !LIBAVCODEC_VER_AT_LEAST(54,25)
+    #define AV_CODEC_ID_NONE CODEC_ID_NONE
+    #define AV_CODEC_ID_MJPEG CODEC_ID_MJPEG
+    #define AV_CODEC_ID_RAWVIDEO CODEC_ID_RAWVIDEO
+    #define AV_CODEC_ID_H264 CODEC_ID_H264
+    #define AV_CODEC_ID_VP8 CODEC_ID_VP8
+#endif
+
+
 class Videostreaming : public QQuickPaintedItem, public v4l2
 {
     Q_OBJECT
