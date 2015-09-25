@@ -50,22 +50,19 @@ bool VideoEncoder::createFile(QString fileName,CodecID encodeType, unsigned widt
 
 #if 0
     if(!isSizeValid())
-    {
-        printf("Invalid size\n");
+    {        
         return false;
     }
 #endif
     pOutputFormat = av_guess_format(NULL, fileName.toStdString().c_str(), NULL);
-    if (!pOutputFormat) {
-        printf("Could not deduce output format from file extension: using MPEG.\n");
+    if (!pOutputFormat) {        
         pOutputFormat = av_guess_format("mpeg", NULL, NULL);
     }
 
     pOutputFormat->video_codec = (CodecID)encodeType;
     pFormatCtx= avformat_alloc_context();
     if(!pFormatCtx)
-    {
-        printf("Error allocating format context\n");
+    {        
         return false;
     }
     pFormatCtx->oformat = pOutputFormat;
@@ -77,16 +74,14 @@ bool VideoEncoder::createFile(QString fileName,CodecID encodeType, unsigned widt
     if(pOutputFormat->video_codec != CODEC_ID_NONE) {
         pCodec = avcodec_find_encoder(pOutputFormat->video_codec);
         if (!pCodec)
-        {
-            printf("codec not found\n");
+        {            
             return false;
         }
         // Add the video stream
 
         pVideoStream = avformat_new_stream(pFormatCtx, pCodec);
         if(!pVideoStream )
-        {
-            printf("Could not allocate stream\n");
+        {            
             return false;
         }
 
@@ -121,8 +116,7 @@ bool VideoEncoder::createFile(QString fileName,CodecID encodeType, unsigned widt
 #if !LIBAVCODEC_VER_AT_LEAST(53,6)
         /* set the output parameters (must be done even if no
                 parameters). */
-        if (av_set_parameters(pFormatCtx, NULL) < 0) {
-            printf("Invalid output format parameters\n");
+        if (av_set_parameters(pFormatCtx, NULL) < 0) {            
             return false;
         }
 #endif
@@ -132,21 +126,18 @@ bool VideoEncoder::createFile(QString fileName,CodecID encodeType, unsigned widt
 #else
         if (avcodec_open(pCodecCtx, pCodec) < 0)
 #endif
-        {
-            printf("could not open codec\n");
+        {            
             return false;
         }
 
         //Allocate memory for output
         if(!initOutputBuf())
-        {
-            printf("Can't allocate memory for output bitstream\n");
+        {            
             return false;
         }
         // Allocate the YUV frame
         if(!initFrame())
-        {
-            printf("Can't init frame\n");
+        {            
             return false;
         }
     }
@@ -158,7 +149,6 @@ bool VideoEncoder::createFile(QString fileName,CodecID encodeType, unsigned widt
     }
     int ret = avformat_write_header(pFormatCtx,NULL);
     if(ret<0) {
-        printf("Unable to record video...");
         return false;
     }
     ok=true;
@@ -228,7 +218,7 @@ int VideoEncoder::encodeImage(const QImage &img)
     }
     if (got_packet) {
         if (pCodecCtx->coded_frame->pts != AV_NOPTS_VALUE)
-		pkt.pts= av_rescale_q(pCodecCtx->coded_frame->pts, pCodecCtx->time_base, pVideoStream->time_base);
+            pkt.pts= av_rescale_q(pCodecCtx->coded_frame->pts, pCodecCtx->time_base, pVideoStream->time_base);
         pkt.stream_index = pVideoStream->index;
         if((tempExtensionCheck) == "mkv") {
             i++;
@@ -389,21 +379,18 @@ bool VideoEncoder::convertImage_sws(const QImage &img)
 {
     // Check if the image matches the size
     if((unsigned)img.width()!=getWidth() || (unsigned)img.height()!=getHeight())
-    {
-        printf("Wrong image size!\n");
+    {        
         return false;
     }
     if(img.format()!=QImage::Format_RGB32 && img.format() != QImage::Format_ARGB32)
-    {
-        printf("Wrong image format\n");
+    {        
         return false;
     }
 
     img_convert_ctx = sws_getCachedContext(img_convert_ctx,getWidth(),getHeight(),PIX_FMT_RGB32,getWidth(),getHeight(),pCodecCtx->pix_fmt,SWS_FAST_BILINEAR, NULL, NULL, NULL);
 
     if (img_convert_ctx == NULL)
-    {
-        printf("Cannot initialize the conversion context\n");
+    {        
         return false;
     }
 

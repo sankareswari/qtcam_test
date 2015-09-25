@@ -27,11 +27,12 @@ SOURCES += main.cpp \
     seecam_ar0130.cpp \
     videoencoder.cpp \
     seecam_cu51.cpp \
-    see3cam_cu130.cpp
+    see3cam_cu130.cpp \
+    h264decoder.cpp
 
-#installation path
-target.path = usr/
-
+# Installation path
+# target.path =
+target.path = /usr/
 
 # Please do not modify the following two lines. Required for deployment.
 include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
@@ -54,12 +55,13 @@ HEADERS += \
     videoencoder.h \
     seecam_cu51.h \
     see3cam_cu130.h \
-    common.h
+    h264decoder.h
+
 
 INCLUDEPATH +=  $$PWD/v4l2headers/include \
                 /usr/include
 
-LIBS += -L/usr/lib/ -lv4l2 -lv4lconvert \
+LIBS += -lv4l2 -lv4lconvert \
         -L/usr/lib/ -lavutil -lavcodec -lavformat -lswscale -ludev  \
         -L/usr/lib/ -lturbojpeg
 

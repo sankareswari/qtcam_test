@@ -39,6 +39,7 @@
 #include <turbojpeg.h>
 #include "v4l2-api.h"
 #include "videoencoder.h"
+#include "h264decoder.h"
 
 #if !LIBAVCODEC_VER_AT_LEAST(54,25)
     #define AV_CODEC_ID_NONE CODEC_ID_NONE
@@ -73,11 +74,16 @@ public:
     void displayFrame();
     bool setBuffer(unsigned char *buf, unsigned size);
 
+    /* cu130 camera - MPEG high frame rate */
     int jpegDecode(unsigned char **pic, unsigned char *buf, unsigned long bytesUsed);
     int decomp(unsigned char **jpegbuf,
                                 unsigned long *jpegsize, unsigned char *dstbuf, int w, int h,
                                 int jpegqual, int tilew, int tileh,unsigned char **pic);
     double getTimeInSecs(void);
+    void freeBuffer(unsigned char *ptr);
+
+    /* cu40 IR image capture */
+    bool extractIRImage(unsigned short int *srcBuffer, unsigned char *irBuffer);
 
     bool findNativeFormat(__u32 format, QImage::Format &dstFmt);
     bool startCapture();
@@ -89,6 +95,7 @@ public:
     QString lastFormat;
 
     VideoEncoder  *videoEncoder;
+    H264Decoder *h264Decode;
 
     /* Jpeg decode */
     int doyuv;
@@ -139,6 +146,7 @@ private:
     struct v4l2_fract interval;
     struct v4l2_format m_capSrcFormat;
     struct v4l2_format m_capDestFormat;
+
     struct v4lconvert_data *m_convertData;
     struct buffer *m_buffers;
 

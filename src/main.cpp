@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     QObject::connect(rootObject,SIGNAL(stopCamPreview()),rootObject,SLOT(triggerModeCapture()));
 
     //Setting the Window ICON
-    QIcon icon("qml/qtcam/icon/images/icon.jpg");
+    QIcon icon("/usr/share/qml/qtcam/icon/images/icon.jpg");
     viewer.setIcon(icon);
     viewer.setTitle("Qtcam");
     viewer.showMaximized();

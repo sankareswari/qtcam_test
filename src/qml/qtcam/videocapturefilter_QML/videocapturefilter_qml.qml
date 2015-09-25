@@ -3498,6 +3498,7 @@ Rectangle {
                 exposureCombo.currentIndex = controlDefaultValue
                 if(exposureCombo.currentText == "Manual Mode"){
                     exposure_Slider.enabled = true
+                    exposure_Slider.opacity = 1
                     exposure_value.opacity = 1
                     exposure_value.enabled = true
                 }
@@ -3571,6 +3572,21 @@ Rectangle {
            cbItemsImgFormat.insert(1, {text: "bmp" })
            cbItemsImgFormat.insert(2, {text: "jpg" })
            cbItemsImgFormat.insert(3, {text: "png" })
+        }else if(device_box.currentText == "See3CAM_CU40")
+        {
+           cbItemsImgFormat.clear();
+           cbItemsImgFormat.insert(0, {text: "jpg" })
+           cbItemsImgFormat.insert(1, {text: "bmp" })
+           cbItemsImgFormat.insert(2, {text: "raw" })
+           cbItemsImgFormat.insert(3, {text: "png" })
+           cbItemsImgFormat.insert(4, {text: "IR data(8bit BMP)" })
+        }else{
+           cbItemsImgFormat.clear();
+           cbItemsImgFormat.insert(0, {text: "jpg" })
+           cbItemsImgFormat.insert(1, {text: "bmp" })
+           cbItemsImgFormat.insert(2, {text: "raw" })
+           cbItemsImgFormat.insert(3, {text: "png" })
+           imageFormatCombo.currentIndex = 0;
         }
         cameraColumnLayout.visible = true
         stillchildProperty.visible = false
